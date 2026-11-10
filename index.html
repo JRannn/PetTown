@@ -1,95 +1,117 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
-		<title>PetTown</title>
+		<title>宠物小镇 · PetTown</title>
 		<style>
-html, body, #canvas {
-	margin: 0;
-	padding: 0;
-	border: 0;
+@font-face {
+	font-family: "PetTown";
+	src: url("cozy-font.ttf") format("truetype");
+	font-display: swap;
 }
-
+* { box-sizing: border-box; }
+html, body, #canvas { margin: 0; padding: 0; border: 0; }
 body {
-	color: white;
-	background-color: black;
+	color: #644332;
+	background: #f7f0de;
 	overflow: hidden;
 	touch-action: none;
+	font-family: "PetTown", "Microsoft YaHei", "PingFang SC", sans-serif;
 }
-
-#canvas {
-	display: block;
-}
-
-#canvas:focus {
-	outline: none;
-}
-
-#status, #status-splash, #status-progress {
-	position: absolute;
-	left: 0;
-	right: 0;
-}
-
-#status, #status-splash {
-	top: 0;
-	bottom: 0;
-}
-
+#canvas { display: block; }
+#canvas:focus { outline: none; }
 #status {
-	background-color: #242424;
+	position: fixed;
+	inset: 0;
+	z-index: 10;
 	display: flex;
-	flex-direction: column;
-	justify-content: center;
 	align-items: center;
-	visibility: hidden;
+	justify-content: center;
+	padding: 24px;
+	background:
+		radial-gradient(ellipse at 12% 88%, #dfe8cf 0 18%, transparent 18.3%),
+		radial-gradient(ellipse at 94% 6%, #e7ecd7 0 20%, transparent 20.3%),
+		#f7f0de;
 }
-
-#status-splash {
-	max-height: 100%;
-	max-width: 100%;
-	margin: auto;
-}
-
-#status-splash.show-image--false {
-	display: none;
-}
-
-#status-splash.fullsize--true {
-	height: 100%;
-	width: 100%;
-	object-fit: contain;
-}
-
-#status-splash.use-filter--false {
-	image-rendering: pixelated;
-}
-
-#status-progress, #status-notice {
-	display: none;
-}
-
-#status-progress {
-	bottom: 10%;
-	width: 50%;
-	margin: 0 auto;
-}
-
-#status-notice {
-	background-color: #5b3943;
-	border-radius: 0.5rem;
-	border: 1px solid #9b3943;
-	color: #e0e0e0;
-	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
-	line-height: 1.3;
-	margin: 0 2rem;
-	overflow: hidden;
-	padding: 1rem;
+#status-splash { display: none; }
+.loading-card {
+	width: min(100%, 370px);
+	padding: 36px 28px 30px;
+	border: 3px solid #ac7357;
+	border-radius: 24px;
+	background: #ffffef;
+	box-shadow: 0 5px 0 #efc6bc, 0 12px 28px #79543910;
 	text-align: center;
-	z-index: 1;
 }
+.paw {
+	position: relative;
+	width: 86px;
+	height: 84px;
+	margin: 0 auto 18px;
+	animation: breathe 2.4s ease-in-out infinite;
+}
+.paw span {
+	position: absolute;
+	background: #dba17e;
+	border: 3px solid #a56e53;
+	border-radius: 50%;
+}
+.paw .pad { width: 49px; height: 39px; left: 19px; top: 40px; border-radius: 48% 48% 42% 42%; }
+.paw .toe-1 { width: 21px; height: 28px; left: 0; top: 24px; transform: rotate(-28deg); }
+.paw .toe-2 { width: 22px; height: 30px; left: 20px; top: 3px; transform: rotate(-12deg); }
+.paw .toe-3 { width: 22px; height: 30px; right: 20px; top: 3px; transform: rotate(12deg); }
+.paw .toe-4 { width: 21px; height: 28px; right: 0; top: 24px; transform: rotate(28deg); }
+h1 { margin: 0; font-size: 34px; font-weight: 400; letter-spacing: 3px; }
+.loading-subtitle { margin: 9px 0 28px; font-size: 14px; color: #9a8067; }
+.loading-caption { margin: 0 0 12px; min-height: 48px; display: flex; align-items: center; justify-content: center; font-size: 15px; line-height: 1.6; }
+#status-progress {
+	appearance: none;
+	-webkit-appearance: none;
+	display: block;
+	width: 100%;
+	height: 15px;
+	overflow: hidden;
+	border: 2px solid #b78364;
+	border-radius: 20px;
+	background: #eadcca;
+}
+#status-progress::-webkit-progress-bar { background: #eadcca; border-radius: 20px; }
+#status-progress::-webkit-progress-value {
+	border-radius: 20px;
+	background: linear-gradient(90deg, #e5b45e, #e6a283);
+}
+#status-progress::-moz-progress-bar {
+	border-radius: 20px;
+	background: linear-gradient(90deg, #e5b45e, #e6a283);
+}
+#status-progress:not([value]) { opacity: 0.7; }
+#status-percent { min-height: 19px; margin: 8px 0 0; color: #9a8067; font-size: 12px; }
+#status-notice {
+	display: none;
+	margin-top: 16px;
+	padding: 12px;
+	border: 1px solid #d1a58d;
+	border-radius: 10px;
+	background: #f6e2d6;
+	color: #865743;
+	font-size: 13px;
+	line-height: 1.6;
+	overflow-wrap: anywhere;
+}
+@keyframes breathe { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-5px) rotate(3deg); } }
+@media (max-width: 380px) { .loading-card { padding: 28px 22px 24px; } h1 { font-size: 30px; } }
+@media (max-height: 450px) {
+	.loading-card { width: 420px; padding: 16px 28px; }
+	.paw { transform: scale(0.65); height: 65px; margin-bottom: 0; animation: none; }
+	h1 { font-size: 26px; }
+	.loading-subtitle { margin: 5px 0 10px; }
+}
+@media (prefers-reduced-motion: reduce) { .paw { animation: none; } }
 		</style>
+		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
+<link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
+
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
 
@@ -124,22 +146,28 @@ body {
 </head>
 	<body>
 		<canvas id="canvas">
-			Your browser does not support the canvas tag.
+			你的浏览器暂不支持游戏画布。
 		</canvas>
 
 		<noscript>
-			Your browser does not support JavaScript.
+			请开启浏览器的 JavaScript 后进入宠物小镇。
 		</noscript>
 
-		<div id="status">
-			<img id="status-splash" class="show-image--false fullsize--true use-filter--true" src="index.png" alt="">
-			<progress id="status-progress"></progress>
-			<div id="status-notice"></div>
+		<div id="status" role="status" aria-live="polite">
+			<div class="loading-card">
+				<div class="paw" aria-hidden="true"><span class="toe-1"></span><span class="toe-2"></span><span class="toe-3"></span><span class="toe-4"></span><span class="pad"></span></div>
+				<h1>宠物小镇</h1>
+				<p class="loading-subtitle">和小伙伴一起，过慢一点的日子</p>
+				<p id="loading-caption" class="loading-caption">宠物的性格倾向，与你每天安排它做什么有关。</p>
+				<progress id="status-progress" aria-label="游戏加载进度"></progress>
+				<p id="status-percent">正在准备小镇…</p>
+				<div id="status-notice"></div>
+			</div>
 		</div>
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":4576836,"index.wasm":1508095},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":4620680,"index.wasm":1508095},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -147,6 +175,23 @@ const engine = new Engine(GODOT_CONFIG);
 	const statusOverlay = document.getElementById('status');
 	const statusProgress = document.getElementById('status-progress');
 	const statusNotice = document.getElementById('status-notice');
+	const statusPercent = document.getElementById('status-percent');
+	const loadingCaption = document.getElementById('loading-caption');
+	const LOADING_TIPS = [
+		"宠物的性格倾向，与你每天安排它做什么有关。",
+		"宠物达到五级后，可以根据其倾向进化为不同品种。",
+		"进化材料要符合宠物的最高倾向，选错了它会不喜欢哦。",
+		"休息、玩耍和打工，都有机会让宠物积累技能经验。",
+		"不同打工地点需要的技能不同，出发前记得看看要求。",
+		"把地图上的宠物拖到房子上，就能直接安排活动。",
+		"玩耍能提升心情和经验，结束后要休息两小时才能再玩。",
+		"体力不足时，可以回家休息，也可以在照顾页使用物品。",
+		"切换主宠物，不会打断其他宠物正在进行的活动。",
+		"进化需要八小时，离线时也会继续计时。",
+		"房子出现完成图标后，记得收取奖励和宠物的信件。",
+		"每天来小镇翻一张牌，看看今天会收获多少金币。"
+	];
+	loadingCaption.textContent = LOADING_TIPS[Math.floor(Math.random() * LOADING_TIPS.length)];
 
 	let initializing = true;
 	let statusMode = '';
@@ -163,6 +208,10 @@ const engine = new Engine(GODOT_CONFIG);
 		statusOverlay.style.visibility = 'visible';
 		statusProgress.style.display = mode === 'progress' ? 'block' : 'none';
 		statusNotice.style.display = mode === 'notice' ? 'block' : 'none';
+		if (mode === 'notice') {
+			loadingCaption.textContent = '小镇暂时没能打开，请刷新重试';
+			statusPercent.textContent = '';
+		}
 		statusMode = mode;
 	}
 
@@ -232,9 +281,12 @@ const engine = new Engine(GODOT_CONFIG);
 				if (current > 0 && total > 0) {
 					statusProgress.value = current;
 					statusProgress.max = total;
+					const percent = Math.min(100, Math.round(current / total * 100));
+					statusPercent.textContent = percent < 100 ? percent + '%' : '正在布置小镇，马上就好…';
 				} else {
 					statusProgress.removeAttribute('value');
 					statusProgress.removeAttribute('max');
+					statusPercent.textContent = '正在准备小镇…';
 				}
 			},
 		}).then(() => {
