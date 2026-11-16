@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 	<head>
-<!-- PetTown web build v96 -->
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
 		<title>宠物小镇 · PetTown</title>
@@ -124,12 +123,6 @@ h1 { margin: 0; font-size: 34px; font-weight: 400; letter-spacing: 3px; }
   window.fetch = async function (input, init) {
     const rawUrl = typeof input === "string" ? input : (input && input.url) || "";
     const cleanUrl = rawUrl.split("?")[0];
-    if (cleanUrl.endsWith("/index.pck") || cleanUrl === "index.pck") {
-      const packUrl = new URL(rawUrl, window.location.href);
-      packUrl.searchParams.set("v", "96-f32e9759");
-      const request = input instanceof Request ? new Request(packUrl.href, input) : packUrl.href;
-      return originalFetch(request, Object.assign({}, init || {}, { cache: "no-cache" }));
-    }
     if (!cleanUrl.endsWith("/index.side.wasm") && !cleanUrl.endsWith("index.side.wasm")) {
       return originalFetch(input, init);
     }
@@ -174,7 +167,7 @@ h1 { margin: 0; font-size: 34px; font-weight: 400; letter-spacing: 3px; }
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":5268316,"index.wasm":1508095},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":5283844,"index.wasm":1508095},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
